@@ -1,0 +1,479 @@
+﻿<Page
+    x:Class="ZMotionTest.Pages.MotionBufferPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:ZMotionTest.ViewModels"
+    Title="运动缓存测试"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MotionBufferViewModel}"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <Grid Margin="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="350" />
+            </Grid.ColumnDefinitions>
+
+            <!--  左侧区域：轴选择和缓存状态  -->
+            <StackPanel Grid.Column="0">
+
+                <!--  轴选择  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                            Text="轴选择与基本信息" />
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <ComboBox
+                                Grid.Row="0"
+                                materialDesign:HintAssist.Hint="选择轴"
+                                ItemsSource="{Binding AxisList}"
+                                SelectedIndex="{Binding SelectedAxisIndex}"
+                                Style="{DynamicResource MaterialDesignFloatingHintComboBox}" />
+
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                <materialDesign:Chip
+                                    Margin="0,0,8,0"
+                                    Content="{Binding IsAxisRunning, StringFormat='运行状态: {0}'}"
+                                    Icon="{materialDesign:PackIcon Kind=Play}" />
+
+                                <materialDesign:Chip Content="{Binding IsAxisEnabled, StringFormat='使能状态: {0}'}" Icon="{materialDesign:PackIcon Kind=Power}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  缓存状态监控  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="缓存状态监控" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="缓存移动数量"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding MovesBuffered}" />
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="是否有缓存"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding HasBufferMovement}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="当前移动标记"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding CurrentMoveMark}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="剩余缓存数量"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding RemainBuffer}" />
+
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="剩余直线缓存"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding RemainLineBuffer}" />
+
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="向量缓存距离"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding VectorBuffered, StringFormat='F3'}" />
+
+                            <Button
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding RefreshBufferStatusCommand}"
+                                Content="刷新缓存状态"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  缓存控制操作  -->
+                <materialDesign:Card Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="缓存控制操作" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding ClearBufferCommand}"
+                                Content="清空缓存"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding PauseAxisCommand}"
+                                Content="暂停轴运动"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                            <Button
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding ResumeAxisCommand}"
+                                Content="恢复轴运动"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                            <Button
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Background="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                BorderBrush="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                Command="{Binding StopAxisCommand}"
+                                Content="停止轴运动"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+
+            <!--  中间区域：缓存命令测试  -->
+            <StackPanel Grid.Column="2">
+
+                <!--  基本缓存运动  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="基本缓存运动" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="移动距离1"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding MoveDistance1, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="移动距离2"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding MoveDistance2, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="移动距离3"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding MoveDistance3, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="移动标记"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding MoveMark, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Button
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding AddSingleMoveCommand}"
+                                Content="添加单次移动"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                            <Button
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding AddSequenceMoveCommand}"
+                                Content="添加多段移动"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                            <Button
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding SetMoveMarkCommand}"
+                                Content="设置移动标记"
+                                Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  缓存IO控制  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="缓存IO控制" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="输出端口号"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding OutputPort, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <ComboBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="输出状态"
+                                SelectedIndex="{Binding OutputState}"
+                                Style="{DynamicResource MaterialDesignFloatingHintComboBox}">
+                                <ComboBoxItem Content="关闭(0)" />
+                                <ComboBoxItem Content="打开(1)" />
+                            </ComboBox>
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="延时时间(ms)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding DelayTime, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Button
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding AddMoveOpCommand}"
+                                Content="添加IO控制"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                            <Button
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding AddMoveDelayCommand}"
+                                Content="添加延时"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  自定义缓存命令  -->
+                <materialDesign:Card Padding="16">
+                    <Button
+                        Margin="0,16,0,0"
+                        materialDesign:ButtonAssist.CornerRadius="4"
+                        Command="{Binding ExecuteCustomCommandCommand}"
+                        Content="执行自定义命令"
+                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+                </materialDesign:Card>
+            </StackPanel>
+
+            <!--  右侧区域：日志和状态  -->
+            <StackPanel Grid.Column="4">
+
+                <!--  实时状态  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="实时状态" />
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                materialDesign:HintAssist.Hint="当前位置(DPOS)"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding CurrentDPosition, StringFormat='F3'}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                materialDesign:HintAssist.Hint="反馈位置(MPOS)"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding CurrentMPosition, StringFormat='F3'}" />
+
+                            <TextBox
+                                Grid.Row="4"
+                                materialDesign:HintAssist.Hint="当前速度"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding CurrentSpeed, StringFormat='F3'}" />
+
+                            <TextBox
+                                Grid.Row="6"
+                                materialDesign:HintAssist.Hint="剩余距离"
+                                IsReadOnly="True"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding RemainDistance, StringFormat='F3'}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  缓存队列信息  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="缓存队列信息" />
+
+                        <ListBox
+                            Height="200"
+                            ItemsSource="{Binding BufferQueue}"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="4">
+                                        <TextBlock FontWeight="Bold" Text="{Binding CommandType}" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Foreground="Gray"
+                                            Text="{Binding Description}"
+                                            TextWrapping="Wrap" />
+                                        <TextBlock
+                                            FontSize="10"
+                                            Foreground="LightGray"
+                                            Text="{Binding Timestamp, StringFormat='HH:mm:ss.fff'}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <Button
+                            Margin="0,8,0,0"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            Command="{Binding ClearQueueLogCommand}"
+                            Content="清空队列日志"
+                            Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  操作日志  -->
+                <materialDesign:Card Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="操作日志" />
+
+                        <ScrollViewer Height="150">
+                            <TextBlock
+                                FontFamily="Consolas"
+                                FontSize="11"
+                                Text="{Binding OperationLog}"
+                                TextWrapping="Wrap" />
+                        </ScrollViewer>
+
+                        <Button
+                            Margin="0,8,0,0"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            Command="{Binding ClearLogCommand}"
+                            Content="清空日志"
+                            Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page> 

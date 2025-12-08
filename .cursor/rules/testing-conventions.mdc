@@ -1,0 +1,49 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# ZMotionSDK 测试约定
+
+## 测试项目结构
+
+### WPF测试应用
+- **主项目**: [Test/ZMotionTest/](mdc:Test/ZMotionTest) - WPF测试应用
+- **主窗口**: [MainWindow.xaml](mdc:Test/ZMotionTest/MainWindow.xaml) - 主界面定义
+- **代码后置**: [MainWindow.xaml.cs](mdc:Test/ZMotionTest/MainWindow.xaml.cs) - 界面逻辑
+- **应用入口**: [App.xaml](mdc:Test/ZMotionTest/App.xaml) - 应用程序定义
+
+## 测试功能组织
+
+### IO功能测试
+- 数字输入读取测试
+- 数字输出控制测试
+- IO状态实时监控
+
+### 运动控制测试
+- 单轴运动测试
+- 位置模式测试
+
+## 测试界面设计原则
+
+### MVVM模式
+- 使用MVVM架构分离界面和逻辑
+- ViewModel处理业务逻辑
+- View只负责界面展示
+- Model使用 [Models/](mdc:ZMotionSDK/Models) 中的数据模型
+
+### 用户体验
+- 提供清晰的操作反馈
+- 实时显示设备状态
+- 错误信息友好提示
+- 支持快捷键操作
+
+## 调试和日志
+
+## 日志记录
+- 记录所有API调用
+- 记录错误和异常信息
+- 提供日志级别控制
+- 支持日志文件导出
+
+

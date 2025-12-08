@@ -1,0 +1,69 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# ZMotionSDK 项目概览
+
+## 项目描述
+ZMotionSDK是一个C#运动控制器软件开发包，提供对ZMotion系列运动控制器的完整编程接口。项目使用.NET 8.0，包含SDK核心库和WPF测试应用。
+
+## 项目结构
+```
+ZMotionSDK/
+├── ZMotionSDK/                 # 核心SDK项目
+│   ├── [ZMotion.cs](mdc:ZMotionSDK/ZMotion.cs)           # 主要API类，提供高级封装
+│   ├── [ZMotion.Motion.cs](mdc:ZMotionSDK/ZMotion.Motion.cs) # 运动控制扩展方法
+│   ├── [Zmcaux.cs](mdc:ZMotionSDK/Zmcaux.cs)             # P/Invoke声明，包含所有底层DLL函数
+│   ├── [ZMotionException.cs](mdc:ZMotionSDK/ZMotionException.cs) # 自定义异常类
+│   ├── [ErrorCode.cs](mdc:ZMotionSDK/ErrorCode.cs)       # 错误代码解析
+│   ├── [BitConverter.cs](mdc:ZMotionSDK/BitConverter.cs) # 位转换工具类
+│   ├── Models/                 # 数据模型目录
+│   │   ├── [AxisInfo.cs](mdc:ZMotionSDK/Models/AxisInfo.cs)     # 轴信息模型
+│   │   ├── [AxisStatus.cs](mdc:ZMotionSDK/Models/AxisStatus.cs) # 轴状态模型
+│   │   ├── [AxisType.cs](mdc:ZMotionSDK/Models/AxisType.cs)     # 轴类型枚举
+│   │   └── [BasDown.cs](mdc:ZMotionSDK/Models/BasDown.cs)       # 基础下载模型
+│   └── dll/                    # 原生DLL文件
+│       ├── zauxdll.dll        # 主要功能库
+│       └── zmotion.dll        # 核心运动控制库
+├── Test/ZMotionTest/          # WPF测试应用项目
+│   ├── [MainWindow.xaml](mdc:Test/ZMotionTest/MainWindow.xaml)   # 主窗口界面
+│   ├── [MainWindow.xaml.cs](mdc:Test/ZMotionTest/MainWindow.xaml.cs) # 界面代码后置
+│   └── [App.xaml](mdc:Test/ZMotionTest/App.xaml)               # 应用程序入口
+└── [ZMotionSDK.sln](mdc:ZMotionSDK.sln)                # 解决方案文件
+```
+
+## 技术栈
+- **框架**: .NET 8.0
+- **UI**: WPF (Windows Presentation Foundation)
+- **架构**: MVVM (Model-View-ViewModel)
+- **P/Invoke**: 原生DLL互操作
+- **包管理**: NuGet Package Manager
+
+## 核心功能特点
+- 工业级运动控制SDK
+- 支持多轴运动控制
+- 以太网和串口通信
+- 实时IO控制
+- Modbus协议支持
+- 总线通信功能
+- 程序下载和执行
+- 参数配置管理
+
+## 快速导航
+- **架构设计**: 查看详细的系统架构和设计模式
+- **开发指南**: 了解开发规范和最佳实践
+- **API使用**: 学习常用的API使用模式
+- **测试约定**: 掌握测试项目的组织和规范
+
+## 重要说明
+- [Zmcaux.cs](mdc:ZMotionSDK/Zmcaux.cs) 文件包含3700+个P/Invoke声明，**严禁修改**
+- 所有高级功能应在 [ZMotion.cs](mdc:ZMotionSDK/ZMotion.cs) 中实现
+- 使用 [Models/](mdc:ZMotionSDK/Models) 目录中的强类型模型进行数据传输
+- 遵循统一的错误处理机制，使用 [ZMotionException.cs](mdc:ZMotionSDK/ZMotionException.cs)
+
+## 文件组织
+- **核心SDK**: 所有主要功能位于 `ZMotionSDK/` 目录
+- **模型类**: 数据模型存放在 @Models/ 目录下
+- **测试项目**: WPF测试应用位于 `Test/ZMotionTest/` 目录
+

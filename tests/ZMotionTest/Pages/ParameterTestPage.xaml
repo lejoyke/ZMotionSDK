@@ -1,0 +1,371 @@
+﻿<Page
+    x:Class="ZMotionTest.Pages.ParameterTestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="参数测试"
+    d:DesignHeight="900"
+    d:DesignWidth="1400"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <!--  状态指示器样式  -->
+        <Style x:Key="StatusIndicatorStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="4,0" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="成功">
+                    <Setter Property="Background" Value="#E8F5E8" />
+                    <Setter Property="BorderBrush" Value="#4CAF50" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="失败">
+                    <Setter Property="Background" Value="#FFEBEE" />
+                    <Setter Property="BorderBrush" Value="#F44336" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  页面标题  -->
+            <TextBlock
+                Grid.Row="0"
+                Style="{DynamicResource MaterialDesignHeadline4TextBlock}"
+                Text="参数测试 - GetParam &amp; SetParam" />
+
+            <!--  主要内容区域  -->
+            <TabControl Grid.Row="2" materialDesign:ColorZoneAssist.Mode="PrimaryMid">
+
+                <!--  单个参数操作  -->
+                <TabItem Header="单个参数">
+                    <Grid Margin="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  参数读取  -->
+                        <materialDesign:Card Grid.Column="0" Padding="16">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,16"
+                                    Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                                    Text="参数读取 (GetParam)" />
+
+                                <!--  轴索引输入  -->
+                                <TextBox
+                                    Margin="0,0,0,12"
+                                    materialDesign:HintAssist.Hint="轴索引"
+                                    Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                    Text="{Binding AxisIndex, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <!--  参数选择  -->
+                                <ComboBox
+                                    Margin="0,0,0,12"
+                                    materialDesign:HintAssist.Hint="选择参数"
+                                    ItemsSource="{Binding ReadParameterList}"
+                                    SelectedIndex="0"
+                                    SelectedItem="{Binding SelectedReadParam}"
+                                    DisplayMemberPath="Description"
+                                    Style="{DynamicResource MaterialDesignFloatingHintComboBox}" />
+
+                                <!--  操作按钮  -->
+                                <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
+                                    <Button
+                                        materialDesign:ButtonAssist.CornerRadius="4"
+                                        Command="{Binding ReadParameterCommand}"
+                                        Content="读取参数"
+                                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                </StackPanel>
+
+                                <!--  读取结果  -->
+                                <materialDesign:Card
+                                    Margin="0,0,0,16"
+                                    Padding="12"
+                                    materialDesign:ElevationAssist.Elevation="Dp1">
+                                    <StackPanel>
+                                        <TextBlock
+                                            Margin="0,0,0,8"
+                                            FontWeight="Medium"
+                                            Text="读取结果:" />
+                                        <TextBlock
+                                            FontFamily="Consolas"
+                                            FontSize="16"
+                                            Foreground="{DynamicResource MaterialDesignBody}"
+                                            Text="{Binding ReadResult}" />
+                                    </StackPanel>
+                                </materialDesign:Card>
+
+                                <!--  常用参数快速选择  -->
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontWeight="Medium"
+                                    Text="常用参数:" />
+                                <ItemsControl ItemsSource="{Binding CommonParameters}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button
+                                                Margin="2"
+                                                Padding="8,4"
+                                                Command="{Binding DataContext.ApplyPresetCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                CommandParameter="{Binding}"
+                                                Content="{Binding Description}"
+                                                Style="{DynamicResource MaterialDesignOutlinedButton}"
+                                                ToolTip="{Binding Parameter}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </materialDesign:Card>
+
+                        <!--  参数写入  -->
+                        <materialDesign:Card Grid.Column="2" Padding="16">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,16"
+                                    Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                                    Text="参数写入 (SetParam)" />
+
+                                <!--  轴索引输入  -->
+                                <TextBox
+                                    Margin="0,0,0,12"
+                                    materialDesign:HintAssist.Hint="轴索引"
+                                    Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                    Text="{Binding AxisIndex, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <!--  参数选择  -->
+                                <ComboBox
+                                    Margin="0,0,0,12"
+                                    materialDesign:HintAssist.Hint="选择参数"
+                                    ItemsSource="{Binding WriteParameterList}"
+                                    SelectedIndex="0"
+                                    SelectedItem="{Binding SelectedWriteParam}"
+                                    DisplayMemberPath="Description"
+                                    Style="{DynamicResource MaterialDesignFloatingHintComboBox}" />
+
+                                <!--  写入值  -->
+                                <TextBox
+                                    Margin="0,0,0,12"
+                                    materialDesign:HintAssist.Hint="写入值"
+                                    Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                    Text="{Binding WriteValue, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <!--  操作按钮  -->
+                                <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
+                                    <Button
+                                        materialDesign:ButtonAssist.CornerRadius="4"
+                                        Command="{Binding WriteParameterCommand}"
+                                        Content="写入参数"
+                                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                </StackPanel>
+
+                                <!--  警告信息  -->
+                                <materialDesign:Card
+                                    Padding="12"
+                                    materialDesign:ElevationAssist.Elevation="Dp1"
+                                    Background="#FFF3E0"
+                                    BorderBrush="#FF9800"
+                                    BorderThickness="1">
+                                    <StackPanel>
+                                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                            <materialDesign:PackIcon
+                                                Margin="0,0,8,0"
+                                                Foreground="#FF9800"
+                                                Kind="Warning" />
+                                            <TextBlock
+                                                FontWeight="Medium"
+                                                Foreground="#FF9800"
+                                                Text="注意事项" />
+                                        </StackPanel>
+                                        <TextBlock FontSize="12" Text="• 请确保设备已正确连接" />
+                                        <TextBlock FontSize="12" Text="• 写入参数前请确认参数值的正确性" />
+                                        <TextBlock FontSize="12" Text="• 某些参数可能需要特定的权限或状态" />
+                                        <TextBlock FontSize="12" Text="• 不正确的参数值可能影响设备运行" />
+                                    </StackPanel>
+                                </materialDesign:Card>
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </Grid>
+                </TabItem>
+
+                <!--  批量参数读取  -->
+                <TabItem Header="批量读取">
+                    <Grid Margin="16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="16" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--  控制面板  -->
+                        <materialDesign:Card Grid.Row="0" Padding="16">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,12"
+                                    Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                                    Text="批量参数读取" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="16" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="16" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="8" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox
+                                        Grid.Column="0"
+                                        Width="100"
+                                        materialDesign:HintAssist.Hint="轴索引"
+                                        Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                        Text="{Binding AxisIndex, UpdateSourceTrigger=PropertyChanged}" />
+
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="0,0,0,8"
+                                        VerticalAlignment="Center"
+                                        Text="将读取所有常用参数的当前值" />
+
+                                    <Button
+                                        Grid.Column="4"
+                                        materialDesign:ButtonAssist.CornerRadius="4"
+                                        Command="{Binding ReadAllCommonParametersCommand}"
+                                        Content="批量读取"
+                                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                                    <Button
+                                        Grid.Column="6"
+                                        materialDesign:ButtonAssist.CornerRadius="4"
+                                        Command="{Binding ClearResultsCommand}"
+                                        Content="清空结果"
+                                        Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                                </Grid>
+                            </StackPanel>
+                        </materialDesign:Card>
+
+                        <!--  结果显示  -->
+                        <materialDesign:Card Grid.Row="2" Padding="16">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Margin="0,0,0,12"
+                                    Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                                    Text="读取结果" />
+
+                                <DataGrid
+                                    Grid.Row="1"
+                                    materialDesign:DataGridAssist.CellPadding="8"
+                                    materialDesign:DataGridAssist.ColumnHeaderPadding="8"
+                                    AutoGenerateColumns="False"
+                                    CanUserAddRows="False"
+                                    CanUserDeleteRows="False"
+                                    IsReadOnly="True"
+                                    ItemsSource="{Binding ReadResults}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn
+                                            Width="140"
+                                            Binding="{Binding ParameterName}"
+                                            Header="参数名" />
+                                        <DataGridTextColumn
+                                            Width="200"
+                                            Binding="{Binding Description}"
+                                            Header="描述" />
+                                        <DataGridTextColumn
+                                            Width="100"
+                                            Binding="{Binding Value, StringFormat=F4}"
+                                            Header="值">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="Consolas" />
+                                                    <Setter Property="HorizontalAlignment" Value="Right" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn
+                                            Width="80"
+                                            Binding="{Binding Status}"
+                                            Header="状态" />
+                                        <DataGridTextColumn
+                                            Width="80"
+                                            Binding="{Binding FormattedTime}"
+                                            Header="时间">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="Consolas" />
+                                                    <Setter Property="FontSize" Value="11" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTemplateColumn Width="80" Header="操作">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button
+                                                        Padding="4,2"
+                                                        Command="{Binding DataContext.RefreshParameterResultCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                        CommandParameter="{Binding}"
+                                                        Content="刷新"
+                                                        Style="{DynamicResource MaterialDesignFlatButton}" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </materialDesign:Card>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+            <!--  状态栏  -->
+            <materialDesign:Card
+                Grid.Row="3"
+                Margin="0,16,0,0"
+                Padding="12"
+                materialDesign:ElevationAssist.Elevation="Dp1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <materialDesign:PackIcon
+                        Grid.Column="0"
+                        Margin="0,0,8,0"
+                        VerticalAlignment="Center"
+                        Kind="Information" />
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Text="{Binding StatusInfo}" />
+                </Grid>
+            </materialDesign:Card>
+        </Grid>
+    </ScrollViewer>
+</Page> 

@@ -1,0 +1,92 @@
+<Page x:Class="ZMotionTest.Pages.AxisMonitorPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d"
+      Title="轴状态监控"
+      d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 轴选择和控制 -->
+        <materialDesign:Card Grid.Row="0" Margin="0,0,0,16" Padding="16">
+            <StackPanel>
+                <TextBlock Text="轴状态监控" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,16"/>
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBox x:Name="AxisCountTextBox" 
+                             materialDesign:HintAssist.Hint="监控轴数量"
+                             Text="{Binding AxisCount, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"
+                             Style="{DynamicResource MaterialDesignFloatingHintTextBox}"/>
+                    
+                    <Button x:Name="StartMonitorButton" 
+                            Content="开始监控" Grid.Column="2"
+                            Style="{DynamicResource MaterialDesignRaisedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            IsEnabled="{Binding IsMonitoring, Converter={StaticResource InverseBooleanConverter}}"
+                            Command="{Binding StartMonitorCommand}"/>
+                    
+                    <Button x:Name="StopMonitorButton" 
+                            Content="停止监控" Grid.Column="4"
+                            Style="{DynamicResource MaterialDesignOutlinedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            Command="{Binding StopMonitorCommand}" 
+                            IsEnabled="{Binding IsMonitoring}"/>
+                </Grid>
+            </StackPanel>
+        </materialDesign:Card>
+
+        <!-- 轴状态显示 -->
+        <materialDesign:Card Grid.Row="1" Padding="16">
+            <DataGrid x:Name="AxisStatusDataGrid" 
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      ItemsSource="{Binding AxisStatusList}"
+                      materialDesign:DataGridAssist.CellPadding="12 8 8 8"
+                      materialDesign:DataGridAssist.ColumnHeaderPadding="8">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="轴号" Binding="{Binding AxisIndex}" Width="60"/>
+                    <DataGridTextColumn Header="运行状态" Binding="{Binding IsRunningText}" Width="80"/>
+                    <DataGridTextColumn Header="规划位置(mm)" Binding="{Binding DPosition, StringFormat=F3}" Width="120"/>
+                    <DataGridTextColumn Header="反馈位置(mm)" Binding="{Binding MPosition, StringFormat=F3}" Width="120"/>
+                    <DataGridTextColumn Header="命令速度" Binding="{Binding Speed, StringFormat=F2}" Width="100"/>
+                    <DataGridTextColumn Header="轴状态" Binding="{Binding StatusText}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:Card>
+
+        <!-- 刷新控制 -->
+        <materialDesign:Card Grid.Row="2" Margin="0,16,0,0" Padding="16">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="刷新间隔:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBox x:Name="RefreshIntervalTextBox" 
+                         Text="{Binding RefreshInterval, UpdateSourceTrigger=PropertyChanged}" Width="80"
+                         materialDesign:HintAssist.Hint="ms"
+                         Style="{DynamicResource MaterialDesignFloatingHintTextBox}"/>
+                <Button x:Name="RefreshOnceButton" 
+                        Content="立即刷新" 
+                        Style="{DynamicResource MaterialDesignOutlinedButton}"
+                        materialDesign:ButtonAssist.CornerRadius="4"
+                        Command="{Binding RefreshOnceCommand}"
+                        Margin="16,0,0,0"/>
+            </StackPanel>
+        </materialDesign:Card>
+    </Grid>
+</Page> 

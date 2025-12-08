@@ -1,0 +1,687 @@
+﻿<Page
+    x:Class="ZMotionTest.Pages.AxisControlPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:ZMotionTest.ViewModels"
+    Title="轴运动控制"
+    d:DataContext="{d:DesignInstance Type=viewmodels:AxisControlViewModel}"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <Grid Margin="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="320" />
+            </Grid.ColumnDefinitions>
+
+            <!--  左侧控制区域  -->
+            <StackPanel Grid.Column="0">
+
+                <!--  轴选择和基本控制  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                            Text="轴选择与基本控制" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <ComboBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="选择轴"
+                                ItemsSource="{Binding AxisList}"
+                                SelectedIndex="{Binding SelectedAxisIndex}"
+                                Style="{DynamicResource MaterialDesignFloatingHintComboBox}" />
+
+                            <ComboBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="轴类型"
+                                DisplayMemberPath="Name"
+                                ItemsSource="{Binding AxisTypes}"
+                                SelectedValue="{Binding SelectedAxisType}"
+                                SelectedValuePath="Type"
+                                Style="{DynamicResource MaterialDesignFloatingHintComboBox}" />
+
+                            <!--  轴使能状态和控制  -->
+                            <StackPanel
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Orientation="Horizontal">
+                                <materialDesign:Chip
+                                    Margin="0,0,16,0"
+                                    Content="{Binding IsAxisEnabled, StringFormat='使能状态: {0}'}"
+                                    Icon="{materialDesign:PackIcon Kind=Power}" />
+
+                                <materialDesign:Chip
+                                    Margin="0,0,16,0"
+                                    Content="{Binding HasAxisAlarm, StringFormat='报警: {0}'}"
+                                    Icon="{materialDesign:PackIcon Kind=Alert}" />
+
+                                <materialDesign:Chip Content="{Binding HomeStatus, StringFormat='回零: {0}'}" Icon="{materialDesign:PackIcon Kind=Home}" />
+                            </StackPanel>
+
+                            <StackPanel
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Orientation="Horizontal">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding ToggleAxisEnableCommand}"
+                                    Content="切换使能"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding ClearAxisAlarmCommand}"
+                                    Content="清除报警"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding GetAxisInfoCommand}"
+                                    Content="获取轴信息"
+                                    Style="{DynamicResource MaterialDesignOutlinedButton}" />
+
+                                <Button
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Background="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                    BorderBrush="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                    Command="{Binding EmergencyStopCommand}"
+                                    Content="全轴急停"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  轴参数设置  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="轴参数设置" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="速度(units/s)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding Speed, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="加速度(units/s²)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding Accel, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="减速度(units/s²)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding Decel, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="脉冲当量"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding Units, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="起始速度(units/s)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding LSpeed, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="S曲线(0-梯形)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding Sramp, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Button
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding SetAxisParamsCommand}"
+                                Content="设置轴参数"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  安全设置  -->
+                <materialDesign:Card Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="安全设置" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="正向限制(units)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding ForwardLimit, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="反向限制(units)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding ReverseLimit, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="快速减速度(units/s²)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding FastDecel, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Button
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding SetSafetyLimitsCommand}"
+                                Content="设置安全限制"
+                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+
+            <!--  中间运动控制区域  -->
+            <StackPanel Grid.Column="2">
+                <!--  运动控制  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="运动控制" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="移动距离(units)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding MoveDistance, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="目标位置(units)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding MovePosition, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="点动速度(units/s)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding JogSpeed, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <StackPanel
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Orientation="Horizontal">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding MoveRelCommand}"
+                                    Content="相对移动"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding MoveAbsCommand}"
+                                    Content="绝对移动"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                                <Button
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding StopAxisCommand}"
+                                    Content="停止轴"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+                            </StackPanel>
+
+                            <StackPanel
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Orientation="Horizontal">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding JogPosCommand}"
+                                    Content="正向点动"
+                                    Style="{DynamicResource MaterialDesignOutlinedButton}" />
+
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding JogNegCommand}"
+                                    Content="反向点动"
+                                    Style="{DynamicResource MaterialDesignOutlinedButton}" />
+
+                                <Button
+                                    Grid.Row="8"
+                                    Grid.Column="0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding HomeCommand}"
+                                    Content="轴回零"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                            </StackPanel>
+
+                            <Button
+                                Grid.Row="8"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding TriggerScopeCommand}"
+                                Content="触发示波器"
+                                Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  回零高级设置  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="回零高级设置" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="回零模式"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding HomeMode, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="回零信号DI"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding HomeSignalDI, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="回零慢速(units/s)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding HomeCreepSpeed, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="回零偏移(units)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding HomeOffset, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                materialDesign:HintAssist.Hint="等待时间(ms)"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding HomeWaitTime, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <CheckBox
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                Content="回零信号反转"
+                                IsChecked="{Binding HomeSignalInvert}" />
+
+                            <StackPanel
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Orientation="Horizontal">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding SetHomeParamsCommand}"
+                                    Content="设置回零参数"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                                <Button
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding GetHomeParamsCommand}"
+                                    Content="获取回零参数"
+                                    Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  总线功能  -->
+                <materialDesign:Card Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="总线功能" />
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                materialDesign:HintAssist.Hint="总线槽位"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding BusSlot, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                <materialDesign:Chip
+                                    Margin="0,0,8,0"
+                                    Content="{Binding BusNodeCount, StringFormat='节点数: {0}'}"
+                                    Icon="{materialDesign:PackIcon Kind=Network}" />
+
+                                <materialDesign:Chip Content="{Binding BusInitStatus, StringFormat='初始化: {0}'}" Icon="{materialDesign:PackIcon Kind=CheckCircle}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding InitBusCommand}"
+                                    Content="初始化总线"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                                <Button
+                                    materialDesign:ButtonAssist.CornerRadius="4"
+                                    Command="{Binding GetBusInfoCommand}"
+                                    Content="获取总线信息"
+                                    Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+
+            <!--  右侧状态监控区域  -->
+            <StackPanel Grid.Column="4">
+
+                <!--  实时状态监控  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                            Text="实时状态监控" />
+                        <!--  位置和速度信息  -->
+                        <Separator Margin="0,8" />
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Border
+                                Grid.Row="0"
+                                Padding="12,8"
+                                Background="{DynamicResource MaterialDesignCardBackground}"
+                                CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                        Text="规划位置" />
+                                    <TextBlock
+                                        FontSize="18"
+                                        FontWeight="Bold"
+                                        Text="{Binding CurrentDPosition, StringFormat='0.000 units'}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border
+                                Grid.Row="2"
+                                Padding="12,8"
+                                Background="{DynamicResource MaterialDesignCardBackground}"
+                                CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                        Text="反馈位置" />
+                                    <TextBlock
+                                        FontSize="18"
+                                        FontWeight="Bold"
+                                        Text="{Binding CurrentMPosition, StringFormat='0.000 units'}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border
+                                Grid.Row="4"
+                                Padding="12,8"
+                                Background="{DynamicResource MaterialDesignCardBackground}"
+                                CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                        Text="编码器位置" />
+                                    <TextBlock
+                                        FontSize="18"
+                                        FontWeight="Bold"
+                                        Text="{Binding CurrentEncoder, StringFormat='0.000'}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border
+                                Grid.Row="6"
+                                Padding="12,8"
+                                Background="{DynamicResource MaterialDesignCardBackground}"
+                                CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                        Text="当前速度" />
+                                    <TextBlock
+                                        FontSize="18"
+                                        FontWeight="Bold"
+                                        Text="{Binding CurrentMSpeed, StringFormat='0.000 units/s'}" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border
+                                Grid.Row="8"
+                                Padding="12,8"
+                                Background="{DynamicResource MaterialDesignCardBackground}"
+                                CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                        Text="命令速度" />
+                                    <TextBlock
+                                        FontSize="18"
+                                        FontWeight="Bold"
+                                        Text="{Binding CurrentVpSpeed, StringFormat='0.000 units/s'}" />
+                                </StackPanel>
+                            </Border>
+
+
+                            <StackPanel Grid.Row="10" Margin="0,8,0,0">
+                                <TextBlock
+                                    Margin="0,0,0,4"
+                                    Style="{DynamicResource MaterialDesignCaptionTextBlock}"
+                                    Text="{Binding AxisStatusText, StringFormat='轴状态码: {0}'}" />
+                                <TextBlock Style="{DynamicResource MaterialDesignCaptionTextBlock}" Text="{Binding StopReasonText, StringFormat='停止原因: {0}'}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!--  位置设置  -->
+                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,16"
+                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                            Text="位置设置" />
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="16" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox
+                                Grid.Row="0"
+                                materialDesign:HintAssist.Hint="设置规划位置"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding CurrentDPosition, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Button
+                                Grid.Row="2"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding SetDPositionCommand}"
+                                Content="设置规划位置"
+                                Style="{DynamicResource MaterialDesignOutlinedButton}" />
+
+                            <TextBox
+                                Grid.Row="4"
+                                materialDesign:HintAssist.Hint="设置反馈位置"
+                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding CurrentMPosition, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Button
+                                Grid.Row="6"
+                                materialDesign:ButtonAssist.CornerRadius="4"
+                                Command="{Binding SetMPositionCommand}"
+                                Content="设置反馈位置"
+                                Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page> 

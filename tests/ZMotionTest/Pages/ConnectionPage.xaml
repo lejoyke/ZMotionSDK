@@ -1,0 +1,146 @@
+﻿<Page
+    x:Class="ZMotionTest.Pages.ConnectionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="连接管理"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Margin="16">
+            <!--  连接参数  -->
+            <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,16"
+                        Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                        Text="连接参数" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            x:Name="IpAddressTextBox"
+                            Grid.Column="0"
+                            materialDesign:HintAssist.Hint="IP地址"
+                            Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                            Text="{Binding IpAddress, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBox
+                            x:Name="TimeoutTextBox"
+                            Grid.Column="2"
+                            materialDesign:HintAssist.Hint="超时时间(ms)"
+                            Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                            Text="{Binding Timeout, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+
+                    <StackPanel Margin="0,16,0,0" Orientation="Horizontal">
+                        <Button
+                            x:Name="ConnectButton"
+                            Margin="0,0,8,0"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            Command="{Binding ConnectCommand}"
+                            Content="连接"
+                            IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBooleanConverter}}"
+                            Style="{DynamicResource MaterialDesignRaisedButton}" />
+
+                        <Button
+                            x:Name="DisconnectButton"
+                            materialDesign:ButtonAssist.CornerRadius="4"
+                            Background="{DynamicResource MaterialDesignValidationErrorBrush}"
+                            BorderBrush="{DynamicResource MaterialDesignValidationErrorBrush}"
+                            Command="{Binding DisconnectCommand}"
+                            Content="断开连接"
+                            IsEnabled="{Binding IsConnected}"
+                            Style="{DynamicResource MaterialDesignRaisedButton}" />
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!--  连接状态  -->
+            <materialDesign:Card Padding="16">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,16"
+                        Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                        Text="连接状态" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <materialDesign:PackIcon
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Kind="Connection" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="24,0,16,0"
+                            VerticalAlignment="Center"
+                            Text="连接状态:" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            FontWeight="Bold"
+                            Foreground="{Binding ConnectionStatusColor}"
+                            Text="{Binding ConnectionStatus}" />
+
+                        <materialDesign:PackIcon
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0,8,8,0"
+                            VerticalAlignment="Center"
+                            Kind="Network" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="24,8,16,0"
+                            VerticalAlignment="Center"
+                            Text="IP地址:" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="0,8,0,0"
+                            Text="{Binding ConnectedIp}" />
+
+                        <materialDesign:PackIcon
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="0,8,8,0"
+                            VerticalAlignment="Center"
+                            Kind="Timer" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="24,8,16,0"
+                            VerticalAlignment="Center"
+                            Text="连接时间:" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="0,8,0,0"
+                            Text="{Binding ConnectionTime}" />
+                    </Grid>
+                </StackPanel>
+            </materialDesign:Card>
+        </StackPanel>
+    </ScrollViewer>
+</Page> 
