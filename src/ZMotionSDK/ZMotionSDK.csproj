@@ -5,15 +5,23 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>1.0.8</Version>
+        <PackageId>ZMotionSDK</PackageId>
+        <Title>ZMotionSDK</Title>
+        <Version>2.0.0</Version>
         <Authors>Lejoy</Authors>
         <Description>此包为正运动二次开发包,增加了一些协议的帮助类</Description>
-        <PackageIcon>ZMotionSDK.png</PackageIcon>
+        <PackageIcon>ZMotion.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageOutputPath>D:\Code\NuGet\ZMotion</PackageOutputPath>
+        <PackageOutputPath>..\..\doc\nuget</PackageOutputPath>
         <PackageReleaseNotes>init</PackageReleaseNotes>
         <Platforms>AnyCPU;x64</Platforms>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <PackageProjectUrl>https://github.com/lejoyke/ZMotionSDK</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/lejoyke/ZMotionSDK</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageTags>motion-control;zmc;zmotion;automation;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,14 +31,8 @@
       <None Update="dll\zmotion.dll">
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </None>
-      <None Update="README.md">
-        <Pack>True</Pack>
-        <PackagePath>\</PackagePath>
-      </None>
-      <None Update="ZMotionSDK.png">
-        <Pack>True</Pack>
-        <PackagePath>\</PackagePath>
-      </None>
+      <None Include="..\..\README.md" Pack="True" PackagePath="\" />
+      <None Include="..\..\doc\nuget\ZMotion.png" Pack="True" PackagePath="\" />
     </ItemGroup>
 
 </Project>
