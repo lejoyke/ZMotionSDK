@@ -1,4 +1,4 @@
-﻿using ZMotionSDK.Models;
+using ZMotionSDK.Models;
 using ZMotionSDK.Helper;
 
 namespace ZMotionSDK;

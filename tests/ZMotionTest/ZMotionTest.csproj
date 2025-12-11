@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\ZMotionSDK\ZMotionSDK.csproj" />
+      <ProjectReference Include="..\..\src\ZMotionSDK\ZMotionSDK.csproj" />
     </ItemGroup>
 
 </Project>
