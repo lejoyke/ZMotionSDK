@@ -5,16 +5,16 @@ using System.Linq.Expressions;
 
 namespace ZMotionSDK;
 
-public class ProtocolDataMapping<TProtocol> : NativeDataMapping<TProtocol, bool>
-    where TProtocol : struct
+public class ProtocolDataMapping<TProtocol> where TProtocol : struct
 {
     private readonly NativeDataMapping<TProtocol, bool> _baseMapping;
+    private readonly IProtocolSchema<TProtocol> _schema;
     private readonly Action<IEnumerable<WriteFrame<bool>>> _commitAction;
 
-    internal ProtocolDataMapping(IProtocolSchema<TProtocol> Schema, Action<IEnumerable<WriteFrame<bool>>> commitAction)
-        : base(Schema)
+    public ProtocolDataMapping(IProtocolSchema<TProtocol> Schema, Action<IEnumerable<WriteFrame<bool>>> commitAction)
     {
         _baseMapping = new NativeDataMapping<TProtocol, bool>(Schema);
+        _schema = Schema;
         _commitAction = commitAction;
     }
 
@@ -46,7 +46,7 @@ public class ProtocolDataMapping<TProtocol> : NativeDataMapping<TProtocol, bool>
     /// </summary>
     public void Commit()
     {
-        var frames = BuildOptimized();
+        var frames = _baseMapping.BuildOptimized();
         _commitAction(frames);
     }
 }
