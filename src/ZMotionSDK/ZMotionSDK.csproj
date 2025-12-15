@@ -7,7 +7,7 @@
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageId>ZMotionSDK</PackageId>
         <Title>ZMotionSDK</Title>
-        <Version>2.1.0</Version>
+        <Version>2.1.1</Version>
         <Authors>Lejoy</Authors>
         <Description>此包为正运动二次开发包,增加了一些协议的帮助类</Description>
         <PackageIcon>ZMotion.png</PackageIcon>
