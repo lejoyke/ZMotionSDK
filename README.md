@@ -30,10 +30,16 @@ ZMotionSDK是一个专业的C#运动控制器软件开发包，为正运动ZMoti
 - **总线回零**: 支持EtherCAT等总线驱动器的回零功能
 - **状态监控**: 实时回零状态监控和异常处理
 
-### 🔄 协议糖化框架
-- **类型安全**: 通过Attribute标记实现类型安全的IO操作
-- **代码简洁**: 将复杂的IO地址映射封装为简单的属性操作
-- **高性能**: 反射缓存机制，确保运行时高性能
+### 🔄 IOSugar（协议糖化）框架
+- 类型安全映射：通过 `[Address]` 等特性将硬件地址映射到结构体/类字段，支持基本类型、枚举、嵌套结构和按位域(BitField)映射。
+- 异步读写：提供 `Read*Async` / `Write*Async` 系列方法，支持批量读写、超时与取消令牌，适合 UI 与高并发场景。
+- 自定义转换器：字段级支持 `Converter` 特性，用于值缩放、单位转换或自定义序列化/反序列化逻辑。
+- 校验与默认值：支持在字段上声明默认值与校验属性（例如范围验证），读取时会自动应用并在写入前进行校验。
+- 高性能：内部使用反射缓存 + 表达式树动态编译，读写性能接近手写访问，并支持批量打包以减少通信开销。
+- 线程安全与并发：内部使用并发字典和分段锁策略，支持多线程并发读写和共享构建器实例。
+- 虚拟地址与别名：支持将逻辑字段映射到虚拟地址或别名，便于在不同硬件版本间复用协议定义。
+
+说明：README 中示例已改为异步风格，建议在生产代码中使用取消令牌与错误处理，并根据实际硬件协议为字段添加合适的转换器与校验属性。
 
 ### 🛡️ 安全与异常处理
 - **完善的异常体系**: 专门的ZMotionException异常处理
@@ -178,15 +184,15 @@ public struct DOProtocol
     [Address(3)] public bool CompletedLight;
 }
 
-// 创建消息构建器
-var builder = new MessageBuilder<DIProtocol, DOProtocol>();
+// 创建 IOSugar 构建器（示例使用异步 API）
+var builder = new ZMotionIOClient<DIProtocol, DOProtocol>();
 builder.ZMotion = zmotion;
 
-// 读取结构化的输入数据
-var inputs = builder.ReadDI();
+// 异步读取结构化的输入数据（支持批量和按需加载）
+var inputs = await builder.ReadDIAsync();
 if (inputs.StartButton && !inputs.EmergencyStop)
 {
-    // 设置结构化的输出数据
+    // 设置结构化的输出数据并异步写回
     var outputs = new DOProtocol
     {
         MotorEnable = true,
@@ -194,7 +200,7 @@ if (inputs.StartButton && !inputs.EmergencyStop)
         AlarmLight = false,
         CompletedLight = false
     };
-    builder.Write(outputs);
+    await builder.WriteAsync(outputs);
 }
 ```
 

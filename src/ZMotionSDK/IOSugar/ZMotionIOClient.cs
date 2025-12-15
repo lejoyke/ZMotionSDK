@@ -190,6 +190,7 @@ public class ZMotionIOClient<TDIProtocol, TDOProtocol>
         var endAddress = (ushort)(DOSchema.StartAddress + DOSchema.TotalSize - 1);
         var data = ZMotion.GetDO_Multi(startAddress, endAddress);
         var result = _doBuilder.Codec.Decode(data);
+        LastRawDOData = data;
         LastDOData = result; // 缓存数据
         return result;
     }
