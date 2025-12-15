@@ -7,7 +7,7 @@
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageId>ZMotionSDK</PackageId>
         <Title>ZMotionSDK</Title>
-        <Version>2.0.2</Version>
+        <Version>2.1.0</Version>
         <Authors>Lejoy</Authors>
         <Description>此包为正运动二次开发包,增加了一些协议的帮助类</Description>
         <PackageIcon>ZMotion.png</PackageIcon>
@@ -33,6 +33,10 @@
       </None>
       <None Include="..\..\README.md" Pack="True" PackagePath="\" />
       <None Include="..\..\doc\nuget\ZMotion.png" Pack="True" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MessageToolkit" Version="3.0.1" />
     </ItemGroup>
 
 </Project>

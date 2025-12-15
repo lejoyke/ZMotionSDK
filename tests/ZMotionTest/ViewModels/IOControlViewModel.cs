@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -6,8 +6,8 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WPFProject.Share.Model;
+using ZMotionSDK;
 using ZMotionSDK.Helper;
-using ZMotionSDK.ProtocolSugar;
 using ZMotionTest.Models;
 using ZMotionTest.Protocol;
 using ZMotionTest.Services;
@@ -40,8 +40,10 @@ public partial class IOControlViewModel : ObservableObject
 
         WriteBitCommand = new RelayCommand<DataStatusModel<int>>(WriteBit);
 
-        _protocolBuilder = new MessageBuilder<DIProtocol, DOProtocol>();
-        _protocolBuilder.ZMotion = _zMotionManager.ZMotion;
+        _protocolBuilder = new ZMotionIOClient<DIProtocol, DOProtocol>
+        {
+            ZMotion = _zMotionManager.ZMotion
+        };
 
         InitDataStatus();
 
@@ -101,7 +103,7 @@ public partial class IOControlViewModel : ObservableObject
 
     private readonly ICommand WriteBitCommand;
 
-    private readonly MessageBuilder<DIProtocol, DOProtocol> _protocolBuilder;
+    private readonly ZMotionIOClient<DIProtocol, DOProtocol> _protocolBuilder;
 
     private Timer _timer;
 
@@ -115,7 +117,9 @@ public partial class IOControlViewModel : ObservableObject
 
     private void InitDataStatus()
     {
-        var addressMapping = _protocolBuilder.DIConfiguration.AddressMapping.OrderBy(n => n.Value);
+        var addressMapping = _protocolBuilder.DISchema.Properties
+            .OrderBy(p => p.Value.Address)
+            .Select(p => new { Key = p.Key, Value = (int)p.Value.Address });
 
         foreach (var item in addressMapping)
         {
@@ -123,7 +127,9 @@ public partial class IOControlViewModel : ObservableObject
                 { Name = item.Key, Address = item.Value, Visibility = false });
         }
 
-        addressMapping = _protocolBuilder.DOConfiguration.AddressMapping.OrderBy(n => n.Value);
+        addressMapping = _protocolBuilder.DOSchema.Properties
+            .OrderBy(p => p.Value.Address)
+            .Select(p => new { Key = p.Key, Value = (int)p.Value.Address });
 
         foreach (var item in addressMapping)
         {

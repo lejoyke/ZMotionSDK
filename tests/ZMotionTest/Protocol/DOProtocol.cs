@@ -1,4 +1,4 @@
-using ZMotionSDK.ProtocolSugar;
+using MessageToolkit.Attributes;
 
 namespace ZMotionTest.Protocol;
 
